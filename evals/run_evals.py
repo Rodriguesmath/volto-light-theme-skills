@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -32,21 +33,38 @@ def load_cases(path: Path) -> list[dict]:
     return data
 
 
+CODE_BLOCK_RE = re.compile(r"```[^\n]*\n(.*?)```", re.DOTALL)
+NEGATION_RE = re.compile(r"\b(never|avoid|do not|don't|instead of|strip|replace|without|prohibited|forbidden|not edit)\b", re.IGNORECASE)
+
+
 def score_response(case: dict, text: str) -> tuple[bool, list[str]]:
     lower = text.lower()
+    code_blocks = "\n".join(CODE_BLOCK_RE.findall(text)).lower()
+    non_negated_lines = "\n".join(
+        line for line in text.splitlines() if not NEGATION_RE.search(line)
+    ).lower()
+    check_target = code_blocks if code_blocks.strip() else non_negated_lines
+
     failures: list[str] = []
     for token in case["must_contain"]:
         if token.lower() not in lower:
             failures.append(f"missing required: {token!r}")
     for token in case["must_not_contain"]:
-        if token.lower() in lower:
+        if token.lower() in check_target:
             failures.append(f"forbidden found: {token!r}")
     return (len(failures) == 0, failures)
 
 
 def run_cli_case(cli: str, prompt: str, skill_text: str) -> str:
-    full_prompt = f"{skill_text}\n\nTask:\n{prompt}"
-    if cli == "claude":
+    full_prompt = (
+        f"{skill_text}\n\n"
+        "Respond directly with the exact file paths, symbols, and code snippet "
+        "(do not invoke tools or modify files).\n\n"
+        f"Task:\n{prompt}"
+    )
+    if cli == "agy":
+        cmd = ["agy", "-p", full_prompt]
+    elif cli == "claude":
         cmd = ["claude", "-p", full_prompt]
     elif cli == "gemini":
         cmd = ["gemini", "-p", full_prompt]
@@ -61,7 +79,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--cases", type=Path, default=DEFAULT_CASES)
     parser.add_argument("--validate-only", action="store_true", help="Validate cases.json schema only")
     parser.add_argument("--responses", type=Path, help="Directory with <case-id>.txt/.md response files")
-    parser.add_argument("--cli", choices=("claude", "gemini"), help="Execute prompts live against an agent CLI")
+    parser.add_argument("--cli", choices=("agy", "claude", "gemini"), help="Execute prompts live against an agent CLI")
     args = parser.parse_args(argv)
 
     cases = load_cases(args.cases)
