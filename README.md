@@ -31,43 +31,47 @@ flowchart TD
     Stack --> Verify["Verification Gate"]
 
     Verify --> V1["check_vlt_conventions.py (No semantic-ui-react / .ui.*)"]
-    Verify --> V2["react-doctor (Lint, Bundle, A11y)"]
+    Verify --> V2["npx react-doctor@latest (Lint, Bundle, A11y)"]
     Verify --> V3["make check && make frontend-test"]
 ```
 
 ---
 
-## Included Skills
+## Install (Unified Command)
+
+Install the core VLT + MIT-licensed skills from this repository together with the upstream Plone and Vercel companion skills in a single command:
+
+```bash
+npx skills add https://github.com/Rodriguesmath/volto-light-theme-skills \
+  && npx skills add https://github.com/codesyntax/plone-expert-developer \
+  && npx skills add https://github.com/vercel-labs/agent-skills
+```
+
+Or run the included [`install.sh`](install.sh):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Rodriguesmath/volto-light-theme-skills/main/install.sh | bash
+```
+
+---
+
+## Included Skills (MIT)
+
+All skills bundled directly in `skills/` carry an explicit **MIT** license:
 
 | Skill | Scope | Source / Maintainer |
 | :--- | :--- | :--- |
 | [`volto-light-theme`](skills/volto-light-theme/SKILL.md) | VLT customization ladder, `--theme-*` token contract, slots, block/listing registration, Figma-to-SCSS rules, and convention checker. | This repo (MIT) |
-| [`plone-expert-developer`](skills/plone-expert-developer/SKILL.md) | Plone 6 backend (Python, Dexterity, `plone.restapi`), Volto TypeScript, and Classic UI routing + `6.docs.plone.org` retrieval protocol. | [CodeSyntax](https://github.com/codesyntax/plone-expert-developer) |
 | [`react-best-practices`](skills/react-best-practices/SKILL.md) | 40+ React performance rules (bundle size, waterfalls, re-renders, SSR/hydration). | [Vercel Engineering](https://github.com/vercel-labs/agent-skills) (MIT) |
 | [`composition-patterns`](skills/composition-patterns/SKILL.md) | Compound components, context interfaces, explicit variants over boolean prop proliferation. | [Vercel Engineering](https://github.com/vercel-labs/agent-skills) (MIT) |
-| [`react-doctor`](skills/react-doctor/SKILL.md) | Automated React diagnostics triage (lint, accessibility, dead code, bundle impact). | `react-doctor` |
 | [`accessibility-audit`](skills/accessibility-audit/SKILL.md) | Deterministic WCAG / axe page and state audits with explicit manual-review boundaries. | MIT |
 | [`accessible-component-review`](skills/accessible-component-review/SKILL.md) | Native semantics, keyboard interaction, focus management, contrast, and ARIA live regions. | MIT |
-| [`web-design-guidelines`](skills/web-design-guidelines/SKILL.md) | UI/UX compliance review against Web Interface Guidelines. | [Vercel Engineering](https://github.com/vercel-labs/agent-skills) |
 
----
+### Upstream Companion Skills (Installed via Unified Command)
 
-## Install
-
-### Using `skills` CLI (recommended)
-
-```bash
-npx skills add https://github.com/Rodriguesmath/volto-light-theme-skills
-```
-
-### Local symlink (Antigravity / Gemini / Claude Code / Codex)
-
-```bash
-git clone https://github.com/Rodriguesmath/volto-light-theme-skills.git ~/volto-light-theme-skills
-
-# Link the core VLT skill (repeat for any companion skill you want active)
-ln -s ~/volto-light-theme-skills/skills/volto-light-theme ~/.gemini/config/skills/volto-light-theme
-```
+- **`plone-expert-developer`** — [CodeSyntax](https://github.com/codesyntax/plone-expert-developer) (Plone 6 backend, Volto TypeScript, Classic UI, `6.docs.plone.org` retrieval protocol).
+- **`web-design-guidelines`** — [Vercel Engineering](https://github.com/vercel-labs/agent-skills) (UI/UX compliance review).
+- **`react-doctor`** — Invoked directly on demand via `npx react-doctor@latest --verbose --scope changed`.
 
 ---
 
@@ -93,6 +97,7 @@ Exit code is `0` when clean, `1` with `file:line` diagnostics on violations.
 volto-light-theme-skills/
 ├── LICENSE
 ├── README.md
+├── install.sh
 └── skills/
     ├── volto-light-theme/
     │   ├── SKILL.md
@@ -100,13 +105,10 @@ volto-light-theme-skills/
     │   │   └── mixins-and-tokens.md
     │   └── scripts/
     │       └── check_vlt_conventions.py
-    ├── plone-expert-developer/
     ├── react-best-practices/
     ├── composition-patterns/
-    ├── react-doctor/
     ├── accessibility-audit/
-    ├── accessible-component-review/
-    └── web-design-guidelines/
+    └── accessible-component-review/
 ```
 
 ---
@@ -118,4 +120,4 @@ This repository builds on the work of the Plone, Volto, and React ecosystems:
 - **Plone & Volto** — [Plone Foundation](https://plone.org/) and the [Volto](https://github.com/plone/volto) community.
 - **Volto Light Theme** — [kitconcept GmbH](https://github.com/kitconcept/volto-light-theme) (`@kitconcept/volto-light-theme`).
 - **PortalBrasil & `sc-volto-light-theme`** — [Simples Consultoria](https://github.com/simplesconsultoria) and [PortalBrasil](https://github.com/portalbrasil) (`@portalbrasil/intranet`, semantic token contracts, and SCSS mixin architecture).
-- **Companion Skills** — [CodeSyntax](https://github.com/codesyntax/plone-expert-developer) (`plone-expert-developer`), [Vercel Engineering](https://github.com/vercel-labs/agent-skills) (`react-best-practices`, `composition-patterns`, `web-design-guidelines`), and the respective authors of `react-doctor`, `accessibility-audit`, and `accessible-component-review` (preserved with their original licenses inside `skills/`).
+- **Companion Skills** — [CodeSyntax](https://github.com/codesyntax/plone-expert-developer) (`plone-expert-developer`) and [Vercel Engineering](https://github.com/vercel-labs/agent-skills) (`react-best-practices`, `composition-patterns`, `web-design-guidelines`).
