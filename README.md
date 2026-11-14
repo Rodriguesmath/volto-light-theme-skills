@@ -78,6 +78,13 @@ irm https://raw.githubusercontent.com/Rodriguesmath/volto-light-theme-skills/mai
 /plugin install volto-light-theme-skills@volto-light-theme-skills
 ```
 
+> **Note:** Installing via `/plugin install` bundles only this repository's MIT skills, hooks, and slash commands. To get the full companion stack (`plone-expert-developer`, `react-best-practices`, `composition-patterns`, and `web-design-guidelines`), also install the external upstream skills:
+>
+> ```bash
+> npx skills add https://github.com/codesyntax/plone-expert-developer -a claude-code -g -s '*' -y \
+>   && npx skills add https://github.com/vercel-labs/agent-skills -a claude-code -g -s '*' -y
+> ```
+
 ### Native Gemini CLI Extension
 
 ```bash
