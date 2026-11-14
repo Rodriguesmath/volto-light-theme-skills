@@ -135,6 +135,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("target", nargs="?", default=os.getcwd(), help="Repo root or addon/src path")
     parser.add_argument("--format", choices=("text", "json"), default="text", help="Output format")
     parser.add_argument("--strict", action="store_true", help="Treat warnings as errors")
+    parser.add_argument("--errors-only", action="store_true", help="Suppress warnings in output")
     args = parser.parse_args(argv)
 
     src_dirs = resolve_src_dirs(args.target)
@@ -151,7 +152,8 @@ def main(argv: list[str] | None = None) -> int:
         issues.extend(scan_src_dir(src))
 
     errors = [i for i in issues if i.severity == "error"]
-    warnings = [i for i in issues if i.severity == "warning"]
+    warnings = [] if args.errors_only else [i for i in issues if i.severity == "warning"]
+    displayed = errors if args.errors_only else issues
     failed = bool(errors) or (args.strict and bool(warnings))
 
     if args.format == "json":
@@ -161,15 +163,15 @@ def main(argv: list[str] | None = None) -> int:
                     "src_dirs": src_dirs,
                     "errors": len(errors),
                     "warnings": len(warnings),
-                    "issues": [asdict(i) for i in issues],
+                    "issues": [asdict(i) for i in displayed],
                 },
                 indent=2,
             )
         )
     else:
-        for i in issues:
+        for i in displayed:
             print(f"{i.path}:{i.line}: [{i.severity}] ({i.rule}) {i.message}")
-        if not issues:
+        if not displayed:
             print(f"OK: 0 issues found in {', '.join(src_dirs)}.")
         else:
             print(f"\nSummary: {len(errors)} error(s), {len(warnings)} warning(s).")

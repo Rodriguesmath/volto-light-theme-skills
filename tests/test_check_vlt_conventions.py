@@ -64,6 +64,22 @@ class TestCheckVltConventions(unittest.TestCase):
             res_strict = self._run_checker(src, "--strict")
             self.assertEqual(res_strict.returncode, 1)
 
+            res_err_only = self._run_checker(src, "--errors-only", "--format", "json")
+            self.assertEqual(res_err_only.returncode, 0)
+            err_data = json.loads(res_err_only.stdout)
+            self.assertEqual(err_data["warnings"], 0)
+            self.assertEqual(err_data["issues"], [])
+
+    def test_evals_validate_only(self) -> None:
+        runner = REPO_ROOT / "evals" / "run_evals.py"
+        res = subprocess.run(
+            [sys.executable, str(runner), "--validate-only"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(res.returncode, 0, res.stdout + res.stderr)
+
     def test_all_skills_have_valid_frontmatter(self) -> None:
         skills_dir = REPO_ROOT / "skills"
         for skill_md in skills_dir.glob("*/SKILL.md"):

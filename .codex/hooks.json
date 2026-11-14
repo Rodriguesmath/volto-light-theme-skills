@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"$(git rev-parse --show-toplevel)/hooks/vlt-post-edit.sh\"",
+            "command": "bash -c 'for p in \"$HOME/.codex/skills/volto-light-theme/scripts/check_vlt_conventions.py\" \"$HOME/.agents/skills/volto-light-theme/scripts/check_vlt_conventions.py\" \"$HOME/volto-light-theme-skills/skills/volto-light-theme/scripts/check_vlt_conventions.py\"; do if [ -f \"$p\" ] && compgen -G \"frontend/packages/*/src\" >/dev/null 2>&1; then python3 \"$p\" . --errors-only; exit $?; fi; done'",
             "timeout": 10,
             "statusMessage": "Checking VLT conventions"
           }
