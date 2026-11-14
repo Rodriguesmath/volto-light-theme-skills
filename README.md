@@ -57,13 +57,13 @@ flowchart TD
 ### Using `skills` CLI (recommended)
 
 ```bash
-npx skills add https://github.com/<your-username>/volto-light-theme-skills
+npx skills add https://github.com/Rodriguesmath/volto-light-theme-skills
 ```
 
 ### Local symlink (Antigravity / Gemini / Claude Code / Codex)
 
 ```bash
-git clone https://github.com/<your-username>/volto-light-theme-skills.git ~/volto-light-theme-skills
+git clone https://github.com/Rodriguesmath/volto-light-theme-skills.git ~/volto-light-theme-skills
 
 # Link the core VLT skill (repeat for any companion skill you want active)
 ln -s ~/volto-light-theme-skills/skills/volto-light-theme ~/.gemini/config/skills/volto-light-theme
