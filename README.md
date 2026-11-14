@@ -12,22 +12,16 @@ Regras de arquitetura, tokens semânticos, hooks automáticos e evals para **Plo
 
 <table>
 <tr>
-<td align="center" width="25%"><h3>6 / 6</h3>evals ao vivo no <code>agy</code><br><sub><a href="#linter--evals"><code>evals/run_evals.py</code></a>, 0 violações</sub></td>
-<td align="center" width="25%"><h3>778 tokens</h3>no <code>SKILL.md</code> principal<br><sub><code>0.00</code> de contaminação no <code>skill-validator</code></sub></td>
-<td align="center" width="25%"><h3>0 deps</h3>no linter VLT<br><sub>Python stdlib puro + <code>--strict</code> / JSON</sub></td>
-<td align="center" width="25%"><h3>6 agentes</h3>suportados nativamente<br><sub>Claude, Antigravity, Gemini, Codex, Vibe</sub></td>
+<td align="center" width="25%"><h3>6 / 6</h3>evals ao vivo no <code>agy</code><br><sub>0 violações VLT</sub></td>
+<td align="center" width="25%"><h3>778 tokens</h3>no <code>SKILL.md</code><br><sub><code>0.00</code> de contaminação</sub></td>
+<td align="center" width="25%"><h3>0 deps</h3>no linter VLT<br><sub>Python stdlib puro</sub></td>
+<td align="center" width="25%"><h3>6 agentes</h3>suportados<br><sub>Claude, Agy, Gemini, Codex, Vibe</sub></td>
 </tr>
 </table>
 
-**[Instalar](#instalar) · [Antes vs. Depois](#antes-vs-depois) · [Arquitetura](#arquitetura) · [Comandos & Hooks](#comandos--hooks) · [Linter & Evals](#linter--evals) · [Créditos](#créditos)**
+**[Instalar](#instalar) · [Antes vs. Depois](#antes-vs-depois) · [Arquitetura](#arquitetura) · [Comandos & Linter](#comandos--linter) · [Créditos](#créditos)**
 
 </div>
-
----
-
-Agentes de IA adoram copiar `position: absolute` e hex `#26364a` do Figma, importar `semantic-ui-react` e duplicar arquivos do core em `src/customizations/`. Tudo isso quebra upgrades do `@kitconcept/volto-light-theme` e do `sc-volto-light-theme`.
-
-Esta suíte força o agente a parar no **degrau mais barato da escada de customização** antes de escrever código — e roda verificação estática automática depois de cada edição.
 
 ---
 
@@ -35,7 +29,7 @@ Esta suíte força o agente a parar no **degrau mais barato da escada de customi
 
 <table>
 <tr>
-<th width="50%">Sem <code>volto-light-theme</code></th>
+<th width="50%">Sem a skill</th>
 <th width="50%">Com <code>volto-light-theme</code></th>
 </tr>
 <tr>
@@ -44,7 +38,7 @@ Esta suíte força o agente a parar no **degrau mais barato da escada de customi
 - Faz shadowing de `Header.tsx` em `src/customizations/`
 - Importa `Container` e `Pagination` de `semantic-ui-react`
 - Sobrescreve `.ui.pagination.menu` com `!important`
-- Cola CSS do Figma com `position: absolute`, `width: 320px` e `color: #26364a`
+- Cola CSS do Figma com `position: absolute`, `320px` e `#26364a`
 
 </td>
 <td valign="top">
@@ -52,7 +46,7 @@ Esta suíte força o agente a parar no **degrau mais barato da escada de customi
 - Registra slot em `src/config/slots.ts` (`registerSlotComponent`)
 - Usa HTML semântico (`<nav>`) ou `@plone/components`
 - Estiliza classes próprias sem seletores `.ui.*`
-- Reconstrói com Flexbox/Grid, `rem`/`clamp()` e `var(--theme-foreground-color)`
+- Reconstrói com Flexbox/Grid, `rem`/`clamp()` e `var(--theme-*)`
 
 </td>
 </tr>
@@ -62,175 +56,78 @@ Esta suíte força o agente a parar no **degrau mais barato da escada de customi
 
 ## Instalar
 
-### Comando unificado (Linux / macOS / WSL)
-
-Instala as skills MIT deste repositório junto com as skills externas recomendadas (`codesyntax/plone-expert-developer` e `vercel-labs/agent-skills`) para todos os agentes detectados:
-
-```bash
-npx skills add https://github.com/Rodriguesmath/volto-light-theme-skills -a '*' -g -s '*' -y \
-  && npx skills add https://github.com/codesyntax/plone-expert-developer -a '*' -g -s '*' -y \
-  && npx skills add https://github.com/vercel-labs/agent-skills -a '*' -g -s '*' -y
-```
-
-Ou via script (passe `AGENT=claude-code`, `AGENT=codex` ou `AGENT=mistral-vibe` para direcionar a um agente específico):
+Um comando instala as skills MIT deste repositório junto com as skills externas recomendadas (`plone-expert-developer` e `vercel-labs/agent-skills`) para todos os agentes detectados:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Rodriguesmath/volto-light-theme-skills/main/install.sh | bash
 ```
 
-### Windows (PowerShell)
+<details>
+<summary>Outras formas de instalação (Windows, Claude Plugin, Gemini Extension, Codex e Mistral Vibe)</summary>
 
+**Windows (PowerShell):**
 ```powershell
 irm https://raw.githubusercontent.com/Rodriguesmath/volto-light-theme-skills/main/install.ps1 | iex
 ```
 
-### Plugin nativo do Claude Code (skills + hooks + comandos slash)
-
+**Plugin nativo do Claude Code (traz apenas as skills MIT deste repo + hooks + comandos slash):**
 ```text
 /plugin marketplace add Rodriguesmath/volto-light-theme-skills
 /plugin install volto-light-theme-skills@volto-light-theme-skills
 ```
+> Para incluir também as skills externas no Claude Code, rode:
+> `npx skills add https://github.com/codesyntax/plone-expert-developer -a claude-code -g -s '*' -y && npx skills add https://github.com/vercel-labs/agent-skills -a claude-code -g -s '*' -y`
 
-> **Nota:** o `/plugin install` instala apenas as skills MIT deste repositório, hooks e comandos slash. Para ter a stack complementar completa (`plone-expert-developer`, `react-best-practices`, `composition-patterns` e `web-design-guidelines`), instale também as skills externas:
->
-> ```bash
-> npx skills add https://github.com/codesyntax/plone-expert-developer -a claude-code -g -s '*' -y \
->   && npx skills add https://github.com/vercel-labs/agent-skills -a claude-code -g -s '*' -y
-> ```
-
-### Extensão nativa do Gemini CLI
-
+**Extensão nativa do Gemini CLI (traz apenas o contexto deste repo):**
 ```bash
 gemini extensions install https://github.com/Rodriguesmath/volto-light-theme-skills
 ```
+> Para incluir também as skills externas no Gemini CLI, rode:
+> `npx skills add https://github.com/codesyntax/plone-expert-developer -a gemini-cli -g -s '*' -y && npx skills add https://github.com/vercel-labs/agent-skills -a gemini-cli -g -s '*' -y`
 
-> **Nota:** `gemini extensions install` carrega apenas o contexto deste repositório (`volto-light-theme`). Para incluir a stack complementar completa (`plone-expert-developer`, `react-best-practices`, `composition-patterns` e `web-design-guidelines`), instale também as skills externas:
->
-> ```bash
-> npx skills add https://github.com/codesyntax/plone-expert-developer -a gemini-cli -g -s '*' -y \
->   && npx skills add https://github.com/vercel-labs/agent-skills -a gemini-cli -g -s '*' -y
-> ```
-
-### OpenAI Codex & Mistral Vibe
-
+**OpenAI Codex & Mistral Vibe (stack completa):**
 ```bash
-# OpenAI Codex (inclui .codex/config.toml, .codex/hooks.json e AGENTS.md)
 curl -fsSL https://raw.githubusercontent.com/Rodriguesmath/volto-light-theme-skills/main/install.sh | AGENT=codex bash
-
-# Mistral Vibe (usa AGENTS.md + skills)
 curl -fsSL https://raw.githubusercontent.com/Rodriguesmath/volto-light-theme-skills/main/install.sh | AGENT=mistral-vibe bash
 ```
+
+</details>
 
 ---
 
 ## Arquitetura
 
-Toda tarefa passa pela **Escada de Customização** (parando no menor degrau possível), aciona as skills companheiras conforme a camada e termina no portão de verificação automática:
-
 ```mermaid
 flowchart TD
-    Task["Feature / Fix / Review"] --> Core["volto-light-theme (Regras Core)"]
-
-    Core --> Ladder{"Escada de Customização (Pare no 1º degrau válido)"}
-    Ladder -->|"1. Visual & Marca"| R1["Tokens & SCSS (src/theme/_root.scss)"]
-    Ladder -->|"2. Estrutura / Chrome"| R2["VLT Slots (src/config/slots.ts)"]
+    Task["Feature / Fix / Review"] --> Core["volto-light-theme"]
+    Core --> Ladder{"Escada de Customização"}
+    Ladder -->|"1. Visual"| R1["Tokens & SCSS (_root.scss)"]
+    Ladder -->|"2. Chrome"| R2["VLT Slots (slots.ts)"]
     Ladder -->|"3. Blocos / Views"| R3["Registry (blocks, views, components)"]
-    Ladder -->|"4. Último Recurso"| R4["Shadowing (src/customizations/)"]
+    Ladder -->|"4. Último Recurso"| R4["Shadowing (customizations/)"]
 
-    subgraph Stack["Skills Companheiras"]
-        Plone["plone-expert-developer (Plone 6 / Dexterity / Volto)"]
-        React["react-best-practices & composition-patterns"]
-        A11y["accessibility-audit & accessible-component-review"]
-        UX["web-design-guidelines"]
-    end
-
-    R1 & R2 & R3 & R4 --> Stack
-    Stack --> Hook["Hook PostToolUse (vlt-post-edit.sh --errors-only)"]
-    Hook --> Verify["Portão de Verificação"]
-
-    Verify --> V1["check_vlt_conventions.py (--strict / --format json)"]
-    Verify --> V2["npx react-doctor@latest (Lint, Bundle, A11y)"]
-    Verify --> V3["make check && make frontend-test"]
+    R1 & R2 & R3 & R4 --> Hook["Hook PostToolUse (--errors-only)"]
+    Hook --> Verify["check_vlt_conventions.py + react-doctor + make check"]
 ```
 
 ---
 
-## Skills Incluídas (MIT)
+## Comandos & Linter
 
-| Skill | Escopo | Origem |
-| :--- | :--- | :--- |
-| [`volto-light-theme`](skills/volto-light-theme/SKILL.md) | Escada de customização VLT, contrato `--theme-*`, slots, blocos/variações, conversão de Figma e linter. | Este repositório (MIT) |
-| [`accessibility-audit`](skills/accessibility-audit/SKILL.md) | Auditoria WCAG / axe determinística com fronteiras explícitas de revisão manual. | MIT |
-| [`accessible-component-review`](skills/accessible-component-review/SKILL.md) | Semântica nativa, teclado, foco, contraste e regiões ARIA live em componentes reutilizáveis. | MIT |
-
-**Instaladas direto da fonte pelo comando unificado:**
-- [`plone-expert-developer`](https://github.com/codesyntax/plone-expert-developer) — CodeSyntax (Plone 6 backend, Volto TypeScript, Classic UI e protocolo `6.docs.plone.org`).
-- [`react-best-practices`](https://github.com/vercel-labs/agent-skills), [`composition-patterns`](https://github.com/vercel-labs/agent-skills) e [`web-design-guidelines`](https://github.com/vercel-labs/agent-skills) — Vercel Engineering.
-- `react-doctor` — executado sob demanda via `npx react-doctor@latest --verbose --scope changed`.
-
----
-
-## Comandos & Hooks
-
-- **`/vlt-ladder`** — Decide o menor degrau da escada VLT antes de editar qualquer arquivo.
-- **`/vlt-figma`** — Converte CSS do Figma Inspect para Flexbox/Grid, `rem`/`clamp()` e tokens `--theme-*`.
-- **`/vlt-audit`** — Roda `check_vlt_conventions.py --strict` e `react-doctor` no projeto atual.
-- **Hook `PostToolUse`** ([`hooks/vlt-post-edit.sh`](hooks/vlt-post-edit.sh) e [`.codex/hooks.json`](.codex/hooks.json)) — Executa `check_vlt_conventions.py . --errors-only` automaticamente após edições em `frontend/packages/*/src`, bloqueando `semantic-ui-react` e `.ui.*` sem poluir o contexto com warnings antigos.
-
----
-
-## Linter & Evals
-
-### `check_vlt_conventions.py`
-
-Linter sem dependências externas: reporta `semantic-ui-react` e `.ui.*` como **error**, e hex hardcoded fora de `_root.scss`, `position: absolute` e overrides em `src/customizations/` sem justificativa como **warning**:
+| Recurso | O que faz |
+| :--- | :--- |
+| **`/vlt-ladder`** | Escolhe o menor degrau da escada VLT antes de escrever código |
+| **`/vlt-figma`** | Converte CSS do Figma para Flexbox/Grid, `rem`/`clamp()` e `--theme-*` |
+| **`/vlt-audit`** | Roda `check_vlt_conventions.py --strict` e `react-doctor` |
+| **Hook `PostToolUse`** | Roda `check_vlt_conventions.py . --errors-only` após edições em `frontend/packages/*/src` |
 
 ```bash
-# Descobre frontend/packages/*/src automaticamente na raiz do projeto
-python3 skills/volto-light-theme/scripts/check_vlt_conventions.py /caminho/do/projeto
+# Linter VLT (0 dependências)
+python3 skills/volto-light-theme/scripts/check_vlt_conventions.py /caminho/do/projeto --strict
 
-# Modo estrito (falha em warnings também) e saída JSON para CI/agentes
-python3 skills/volto-light-theme/scripts/check_vlt_conventions.py frontend/packages/meu-addon/src --strict --format json
-```
-
-### Suíte de Evals (`evals/run_evals.py`)
-
-6 cenários canônicos de VLT em [`evals/cases.json`](evals/cases.json) (testados ao vivo no `agy` com placar **6/6 passed**):
-
-```bash
-# Valida o schema dos casos (roda no CI)
-python3 evals/run_evals.py --validate-only
-
-# Executa ao vivo contra Antigravity, Claude Code ou Gemini CLI
+# Evals e testes do repositório
 python3 evals/run_evals.py --cli agy
-```
-
-### Testes do repositório
-
-```bash
 python3 -m unittest discover -s tests -v
-```
-
----
-
-## Estrutura do Repositório
-
-```text
-volto-light-theme-skills/
-├── .claude-plugin/          # Manifestos nativos do Claude Code (plugin + marketplace)
-├── .codex/                  # Configuração e hook do OpenAI Codex
-├── .github/workflows/       # CI (unittest, evals, bash -n, JSON e TOML)
-├── commands/                # /vlt-ladder, /vlt-figma, /vlt-audit
-├── evals/                   # 6 cenários VLT + runner CLI
-├── hooks/                   # Hook PostToolUse (--errors-only)
-├── skills/                  # Skills MIT empacotadas
-├── tests/                   # Testes unitários do linter, evals e frontmatter
-├── AGENTS.md                # Instruções raiz para Codex e Mistral Vibe
-├── gemini-extension.json    # Manifesto de extensão do Gemini CLI
-├── install.ps1              # Instalador Windows PowerShell
-├── install.sh               # Instalador Linux / macOS / WSL
-├── LICENSE                  # MIT
-└── README.md
 ```
 
 ---
@@ -239,5 +136,5 @@ volto-light-theme-skills/
 
 - **Plone & Volto** — [Plone Foundation](https://plone.org/) e comunidade [Volto](https://github.com/plone/volto).
 - **Volto Light Theme** — [kitconcept GmbH](https://github.com/kitconcept/volto-light-theme) (`@kitconcept/volto-light-theme`).
-- **PortalBrasil & `sc-volto-light-theme`** — [Simples Consultoria](https://github.com/simplesconsultoria) e [PortalBrasil](https://github.com/portalbrasil) (`@portalbrasil/intranet`, contrato de tokens semânticos e arquitetura de mixins SCSS).
-- **Skills Companheiras** — [CodeSyntax](https://github.com/codesyntax/plone-expert-developer) (`plone-expert-developer`), [Vercel Engineering](https://github.com/vercel-labs/agent-skills) (`react-best-practices`, `composition-patterns`, `web-design-guidelines`) e as skills MIT `accessibility-audit` / `accessible-component-review` preservadas em `skills/`.
+- **PortalBrasil & `sc-volto-light-theme`** — [Simples Consultoria](https://github.com/simplesconsultoria) e [PortalBrasil](https://github.com/portalbrasil).
+- **Skills Companheiras** — [CodeSyntax](https://github.com/codesyntax/plone-expert-developer) (`plone-expert-developer`), [Vercel Engineering](https://github.com/vercel-labs/agent-skills) (`react-best-practices`, `composition-patterns`, `web-design-guidelines`) e as skills MIT `accessibility-audit` / `accessible-component-review` em `skills/`.
