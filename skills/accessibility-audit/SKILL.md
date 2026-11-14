@@ -44,5 +44,5 @@ is confirmed.
 - Do not assign content meaning, alt text, or labels that requires owner
   judgment.
 
-Every conclusion must retain the disclaimer in
-[the evidence model](../../docs/EVIDENCE-MODEL.md).
+Every conclusion must retain the evidence-boundary disclaimers defined in
+[references/manual-boundaries.md](references/manual-boundaries.md).

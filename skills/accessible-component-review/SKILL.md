@@ -1,10 +1,9 @@
 ---
 name: accessible-component-review
-description:
-  Reviews an interface component's native semantics, name-role-value, keyboard
-  behavior, focus, colors, motion, target size, announcements, and disabled
-  states. Use for design-system, component, widget, button, menu, tabs, toggle,
-  tooltip, or interactive UI accessibility.
+description: >
+  Reviews an interactive UI component's native semantics, keyboard behavior,
+  focus management, contrast, motion, and ARIA announcements across all states.
+  Use when building or auditing design-system widgets and reusable controls.
 license: MIT
 metadata:
   version: "1.0"

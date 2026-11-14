@@ -93,15 +93,13 @@ All skills bundled directly in `skills/` carry an explicit **MIT** license:
 | Skill | Scope | Source / Maintainer |
 | :--- | :--- | :--- |
 | [`volto-light-theme`](skills/volto-light-theme/SKILL.md) | VLT customization ladder, `--theme-*` token contract, slots, block/listing registration, Figma-to-SCSS rules, and convention checker. | This repo (MIT) |
-| [`react-best-practices`](skills/react-best-practices/SKILL.md) | 40+ React performance rules (bundle size, waterfalls, re-renders, SSR/hydration). | [Vercel Engineering](https://github.com/vercel-labs/agent-skills) (MIT) |
-| [`composition-patterns`](skills/composition-patterns/SKILL.md) | Compound components, context interfaces, explicit variants over boolean prop proliferation. | [Vercel Engineering](https://github.com/vercel-labs/agent-skills) (MIT) |
 | [`accessibility-audit`](skills/accessibility-audit/SKILL.md) | Deterministic WCAG / axe page and state audits with explicit manual-review boundaries. | MIT |
 | [`accessible-component-review`](skills/accessible-component-review/SKILL.md) | Native semantics, keyboard interaction, focus management, contrast, and ARIA live regions. | MIT |
 
 ### Upstream Companion Skills (Installed via Unified Command)
 
 - **`plone-expert-developer`** — [CodeSyntax](https://github.com/codesyntax/plone-expert-developer) (Plone 6 backend, Volto TypeScript, Classic UI, `6.docs.plone.org` retrieval protocol).
-- **`web-design-guidelines`** — [Vercel Engineering](https://github.com/vercel-labs/agent-skills) (UI/UX compliance review).
+- **`react-best-practices`**, **`composition-patterns`**, **`web-design-guidelines`** — [Vercel Engineering](https://github.com/vercel-labs/agent-skills) (React performance, composition patterns, UI/UX compliance).
 - **`react-doctor`** — Invoked directly on demand via `npx react-doctor@latest --verbose --scope changed`.
 
 ---

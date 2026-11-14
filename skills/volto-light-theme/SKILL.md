@@ -5,6 +5,7 @@ description: >
   PortalBrasil) development rules. Enforces native local dev, pnpm, VLT layers,
   customization ladder (tokens -> slots -> registry -> shadowing last),
   semantic tokens, and block/slot/mixin patterns.
+license: MIT
 ---
 
 # Volto Light Theme (VLT) Development Rules
