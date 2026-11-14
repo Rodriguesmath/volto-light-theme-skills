@@ -39,18 +39,18 @@ flowchart TD
 
 ## Install (Unified Command)
 
-Install the core VLT + MIT-licensed skills from this repository together with the upstream Plone and Vercel companion skills in a single command:
+Install the core VLT + MIT-licensed skills from this repository together with the upstream Plone and Vercel companion skills globally across all detected agents (Claude Code, Antigravity, Codex, etc.):
 
 ```bash
-npx skills add https://github.com/Rodriguesmath/volto-light-theme-skills \
-  && npx skills add https://github.com/codesyntax/plone-expert-developer \
-  && npx skills add https://github.com/vercel-labs/agent-skills
+npx skills add https://github.com/Rodriguesmath/volto-light-theme-skills -a '*' -g -s '*' -y \
+  && npx skills add https://github.com/codesyntax/plone-expert-developer -a '*' -g -s '*' -y \
+  && npx skills add https://github.com/vercel-labs/agent-skills -a '*' -g -s '*' -y
 ```
 
-Or run the included [`install.sh`](install.sh):
+To target **Claude Code only**, replace `-a '*'` with `-a claude-code` (or run `install.sh` with `AGENT=claude-code`):
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Rodriguesmath/volto-light-theme-skills/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Rodriguesmath/volto-light-theme-skills/main/install.sh | AGENT=claude-code bash
 ```
 
 ---
