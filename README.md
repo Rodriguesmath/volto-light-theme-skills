@@ -91,6 +91,13 @@ irm https://raw.githubusercontent.com/Rodriguesmath/volto-light-theme-skills/mai
 gemini extensions install https://github.com/Rodriguesmath/volto-light-theme-skills
 ```
 
+> **Note:** `gemini extensions install` loads only this repository's context (`volto-light-theme`). To include the full companion stack (`plone-expert-developer`, `react-best-practices`, `composition-patterns`, and `web-design-guidelines`), also install the external upstream skills via `install.sh` (or `npx skills add` targeting `gemini-cli`):
+>
+> ```bash
+> npx skills add https://github.com/codesyntax/plone-expert-developer -a gemini-cli -g -s '*' -y \
+>   && npx skills add https://github.com/vercel-labs/agent-skills -a gemini-cli -g -s '*' -y
+> ```
+
 ---
 
 ## Included Skills (MIT)
