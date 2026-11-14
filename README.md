@@ -98,6 +98,22 @@ gemini extensions install https://github.com/Rodriguesmath/volto-light-theme-ski
 >   && npx skills add https://github.com/vercel-labs/agent-skills -a gemini-cli -g -s '*' -y
 > ```
 
+### OpenAI Codex & Mistral Vibe
+
+Install the full stack (bundled + external companion skills) for **OpenAI Codex**:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Rodriguesmath/volto-light-theme-skills/main/install.sh | AGENT=codex bash
+```
+
+Or for **Mistral Vibe**:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Rodriguesmath/volto-light-theme-skills/main/install.sh | AGENT=mistral-vibe bash
+```
+
+*(Codex hook support is configured in [`.codex/config.toml`](.codex/config.toml) and [`.codex/hooks.json`](.codex/hooks.json); root [`AGENTS.md`](AGENTS.md) is also included for Codex and Mistral Vibe discovery.)*
+
 ---
 
 ## Included Skills (MIT)
