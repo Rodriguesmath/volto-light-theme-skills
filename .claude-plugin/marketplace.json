@@ -1,13 +1,17 @@
 {
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "volto-light-theme-skills",
+  "description": "Upgrade-safe AI agent skills, convention hooks, and slash commands for Plone 6, Volto, and Volto Light Theme.",
   "owner": {
-    "name": "Rodriguesmath"
+    "name": "Rodriguesmath",
+    "url": "https://github.com/Rodriguesmath"
   },
   "plugins": [
     {
       "name": "volto-light-theme-skills",
       "source": "./",
-      "description": "Upgrade-safe AI agent skills, convention hooks, and slash commands for Plone 6, Volto, and Volto Light Theme."
+      "description": "Upgrade-safe AI agent skills, convention hooks, and slash commands for Plone 6, Volto, and Volto Light Theme.",
+      "category": "development"
     }
   ]
 }
