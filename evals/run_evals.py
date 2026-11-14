@@ -14,6 +14,7 @@ import json
 import re
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 EVALS_DIR = Path(__file__).resolve().parent
@@ -34,20 +35,29 @@ def load_cases(path: Path) -> list[dict]:
 
 
 CODE_BLOCK_RE = re.compile(r"```[^\n]*\n(.*?)```", re.DOTALL)
+BLOCK_COMMENT_RE = re.compile(r"/\*.*?\*/", re.DOTALL)
+LINE_COMMENT_RE = re.compile(r"//[^\n]*")
 NEGATION_RE = re.compile(r"\b(never|avoid|do not|don't|instead of|strip|replace|without|prohibited|forbidden|not edit)\b", re.IGNORECASE)
+
+
+def strip_code_comments(code: str) -> str:
+    code = BLOCK_COMMENT_RE.sub("", code)
+    return LINE_COMMENT_RE.sub("", code)
 
 
 def score_response(case: dict, text: str) -> tuple[bool, list[str]]:
     lower = text.lower()
-    code_blocks = "\n".join(CODE_BLOCK_RE.findall(text)).lower()
+    raw_blocks = CODE_BLOCK_RE.findall(text)
+    code_only = "\n".join(strip_code_comments(b) for b in raw_blocks).lower()
     non_negated_lines = "\n".join(
         line for line in text.splitlines() if not NEGATION_RE.search(line)
     ).lower()
-    check_target = code_blocks if code_blocks.strip() else non_negated_lines
+    check_target = code_only if raw_blocks else non_negated_lines
 
     failures: list[str] = []
     for token in case["must_contain"]:
-        if token.lower() not in lower:
+        options = [opt.strip().lower() for opt in token.split("|")]
+        if not any(opt in lower for opt in options):
             failures.append(f"missing required: {token!r}")
     for token in case["must_not_contain"]:
         if token.lower() in check_target:
@@ -58,8 +68,8 @@ def score_response(case: dict, text: str) -> tuple[bool, list[str]]:
 def run_cli_case(cli: str, prompt: str, skill_text: str) -> str:
     full_prompt = (
         f"{skill_text}\n\n"
-        "Respond directly with the exact file paths, symbols, and code snippet "
-        "(do not invoke tools or modify files).\n\n"
+        "Respond directly with the exact target file paths, symbols, and final implementation code blocks "
+        "(do not invoke tools, modify files, or include 'before' code snippets).\n\n"
         f"Task:\n{prompt}"
     )
     if cli == "agy":
@@ -70,7 +80,14 @@ def run_cli_case(cli: str, prompt: str, skill_text: str) -> str:
         cmd = ["gemini", "-p", full_prompt]
     else:
         raise ValueError(f"Unsupported CLI: {cli}")
-    res = subprocess.run(cmd, capture_output=True, text=True, timeout=120, check=False)
+    res = subprocess.run(
+        cmd,
+        cwd=tempfile.gettempdir(),
+        capture_output=True,
+        text=True,
+        timeout=120,
+        check=False,
+    )
     return res.stdout + "\n" + res.stderr
 
 

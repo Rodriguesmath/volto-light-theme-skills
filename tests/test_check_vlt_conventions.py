@@ -34,6 +34,22 @@ class TestCheckVltConventions(unittest.TestCase):
             res = self._run_checker(src, "--strict")
             self.assertEqual(res.returncode, 0, res.stdout + res.stderr)
 
+    def test_evals_score_response_ignores_comments_and_catches_real_code(self) -> None:
+        sys.path.insert(0, str(REPO_ROOT / "evals"))
+        import run_evals
+
+        case = {
+            "id": "t",
+            "must_contain": ["var(--theme-", "rem"],
+            "must_not_contain": ["position: absolute", "#26364a"],
+        }
+        good = "```scss\n// stripped position: absolute and #26364a\n.box { padding: 1rem; color: var(--theme-foreground-color); }\n```"
+        bad = "```scss\n.box { position: absolute; padding: 1rem; color: var(--theme-foreground-color); }\n```"
+        self.assertEqual(run_evals.score_response(case, good), (True, []))
+        ok, failures = run_evals.score_response(case, bad)
+        self.assertFalse(ok)
+        self.assertIn("forbidden found: 'position: absolute'", failures)
+
     def test_detects_semantic_ui_import_and_ui_selector_as_errors(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             src = Path(tmp) / "src"
@@ -79,6 +95,22 @@ class TestCheckVltConventions(unittest.TestCase):
             check=False,
         )
         self.assertEqual(res.returncode, 0, res.stdout + res.stderr)
+
+    def test_evals_score_response_ignores_comments_and_catches_real_code(self) -> None:
+        sys.path.insert(0, str(REPO_ROOT / "evals"))
+        import run_evals
+
+        case = {
+            "id": "t",
+            "must_contain": ["var(--theme-", "rem"],
+            "must_not_contain": ["position: absolute", "#26364a"],
+        }
+        good = "```scss\n// stripped position: absolute and #26364a\n.box { padding: 1rem; color: var(--theme-foreground-color); }\n```"
+        bad = "```scss\n.box { position: absolute; padding: 1rem; color: var(--theme-foreground-color); }\n```"
+        self.assertEqual(run_evals.score_response(case, good), (True, []))
+        ok, failures = run_evals.score_response(case, bad)
+        self.assertFalse(ok)
+        self.assertIn("forbidden found: 'position: absolute'", failures)
 
     def test_all_skills_have_valid_frontmatter(self) -> None:
         skills_dir = REPO_ROOT / "skills"

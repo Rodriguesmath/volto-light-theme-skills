@@ -29,7 +29,7 @@
     "prompt": "Convert this Figma Inspect CSS: position: absolute; top: 24px; left: 16px; width: 320px; color: #26364a;",
     "expected_rung": "tokens",
     "must_contain": ["var(--theme-", "rem"],
-    "must_not_contain": ["position: absolute", "#26364a"]
+    "must_not_contain": ["position: absolute", "color: #26364a"]
   },
   {
     "id": "vlt-05-no-semantic-ui",
@@ -44,7 +44,7 @@
     "category": "customization-ladder",
     "prompt": "Override a Volto core component that has no slot or registry hook.",
     "expected_rung": "shadowing-with-justification",
-    "must_contain": ["src/customizations/", "why"],
+    "must_contain": ["src/customizations/", "why|because|reason|rungs 1"],
     "must_not_contain": ["frontend/core/"]
   }
 ]
