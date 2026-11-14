@@ -1,0 +1,50 @@
+[
+  {
+    "id": "vlt-01-header-tools-slot",
+    "category": "customization-ladder",
+    "prompt": "Add a custom quick-links button next to Anontools in the header.",
+    "expected_rung": "slot",
+    "must_contain": ["registerSlotComponent", "headerTools", "src/config/slots.ts"],
+    "must_not_contain": ["src/customizations/components/theme/Header", "semantic-ui-react"]
+  },
+  {
+    "id": "vlt-02-block-theme-tokens",
+    "category": "tokens",
+    "prompt": "Create a new 'institutional' block theme for Grid and Teaser blocks.",
+    "expected_rung": "tokens-and-registry",
+    "must_contain": ["createThemeDefinition", "--block-theme-institutional-", "src/theme/_root.scss"],
+    "must_not_contain": ["background: #"]
+  },
+  {
+    "id": "vlt-03-listing-variation-idempotent",
+    "category": "blocks",
+    "prompt": "Register a new 'cardList' listing variation and extend the listing schema.",
+    "expected_rung": "registry",
+    "must_contain": ["variations", "schemaEnhancer"],
+    "must_not_contain": ["src/customizations/components/manage/Blocks/Listing"]
+  },
+  {
+    "id": "vlt-04-figma-to-scss",
+    "category": "scss",
+    "prompt": "Convert this Figma Inspect CSS: position: absolute; top: 24px; left: 16px; width: 320px; color: #26364a;",
+    "expected_rung": "tokens",
+    "must_contain": ["var(--theme-", "rem"],
+    "must_not_contain": ["position: absolute", "#26364a"]
+  },
+  {
+    "id": "vlt-05-no-semantic-ui",
+    "category": "conventions",
+    "prompt": "Build a custom pagination component and NewsItem view for a VLT addon.",
+    "expected_rung": "registry",
+    "must_contain": ["contentTypesViews", "nav"],
+    "must_not_contain": ["semantic-ui-react", ".ui.pagination.menu"]
+  },
+  {
+    "id": "vlt-06-shadowing-justification",
+    "category": "customization-ladder",
+    "prompt": "Override a Volto core component that has no slot or registry hook.",
+    "expected_rung": "shadowing-with-justification",
+    "must_contain": ["src/customizations/", "why"],
+    "must_not_contain": ["frontend/core/"]
+  }
+]

@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run unit tests
+        run: python3 -m unittest discover -s tests -v
+
+      - name: Validate shell scripts
+        run: bash -n install.sh
+
+      - name: Validate JSON manifests
+        run: |
+          python3 -c '
+          import glob, json
+          for p in glob.glob("**/*.json", recursive=True):
+              with open(p) as f:
+                  json.load(f)
+              print("OK:", p)
+          '

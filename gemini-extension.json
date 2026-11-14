@@ -1,0 +1,6 @@
+{
+  "name": "volto-light-theme-skills",
+  "version": "1.0.0",
+  "description": "Upgrade-safe AI agent skills for Plone 6, Volto, and Volto Light Theme.",
+  "contextFileName": "skills/volto-light-theme/SKILL.md"
+}

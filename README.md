@@ -1,14 +1,12 @@
 # volto-light-theme-skills
 
-**Upgrade-safe AI agent skills for Plone 6, Volto, and Volto Light Theme.**
+**Upgrade-safe AI agent skills, convention hooks, and slash commands for Plone 6, Volto, and Volto Light Theme.**
 
-AI coding agents default to generic React patterns, inline hex colors, `semantic-ui-react` imports, and `src/customizations/` file shadowing—all of which break upgrades and violate `@kitconcept/volto-light-theme` and `sc-volto-light-theme` conventions. This repository encodes the exact customization ladder, token contracts, registry patterns, and static checks needed to ship clean Volto Light Theme addons on the first pass.
+AI coding agents default to generic React patterns, inline hex colors, `semantic-ui-react` imports, and `src/customizations/` file shadowing—all of which break upgrades and violate `@kitconcept/volto-light-theme` and `sc-volto-light-theme` conventions. This repository encodes the exact customization ladder, token contracts, registry patterns, and automated enforcement needed to ship clean Volto Light Theme addons on the first pass.
 
 ---
 
 ## Architecture
-
-The suite pairs a core **Volto Light Theme** skill with specialized Plone, React, and accessibility skills. Every UI change is routed through the **Customization Ladder**—stopping at the lowest-cost, most upgrade-safe rung—before running deterministic verification.
 
 ```mermaid
 flowchart TD
@@ -28,18 +26,32 @@ flowchart TD
     end
 
     R1 & R2 & R3 & R4 --> Stack
-    Stack --> Verify["Verification Gate"]
+    Stack --> Hook["PostToolUse Hook (vlt-post-edit.sh)"]
+    Hook --> Verify["Verification Gate"]
 
-    Verify --> V1["check_vlt_conventions.py (No semantic-ui-react / .ui.*)"]
+    Verify --> V1["check_vlt_conventions.py (--strict / --format json)"]
     Verify --> V2["npx react-doctor@latest (Lint, Bundle, A11y)"]
     Verify --> V3["make check && make frontend-test"]
 ```
 
 ---
 
-## Install (Unified Command)
+## Before / After
 
-Install the core VLT + MIT-licensed skills from this repository together with the upstream Plone and Vercel companion skills globally across all detected agents (Claude Code, Antigravity, Codex, etc.):
+| Without `volto-light-theme` | With `volto-light-theme` |
+| :--- | :--- |
+| Shadows `src/customizations/components/theme/Header/Header.tsx` | Registers slot in `src/config/slots.ts` via `registerSlotComponent` |
+| Imports `Container` / `Pagination` from `semantic-ui-react` | Uses native HTML/Volto components (`<nav>`, `@plone/components`) |
+| Copies `position: absolute; width: 320px; color: #26364a;` from Figma | Rebuilds with Flexbox/Grid, `rem`/`clamp()`, and `var(--theme-foreground-color)` |
+| Overrides `.ui.pagination.menu` with `!important` | Styles semantic classes without `.ui.*` selectors |
+
+---
+
+## Install
+
+### Unified Shell Command (Linux / macOS / WSL)
+
+Installs this repository's MIT skills alongside `codesyntax/plone-expert-developer` and `vercel-labs/agent-skills` globally across all detected agents:
 
 ```bash
 npx skills add https://github.com/Rodriguesmath/volto-light-theme-skills -a '*' -g -s '*' -y \
@@ -47,10 +59,29 @@ npx skills add https://github.com/Rodriguesmath/volto-light-theme-skills -a '*' 
   && npx skills add https://github.com/vercel-labs/agent-skills -a '*' -g -s '*' -y
 ```
 
-To target **Claude Code only**, replace `-a '*'` with `-a claude-code` (or run `install.sh` with `AGENT=claude-code`):
+Or via `install.sh` (pass `AGENT=claude-code` to target Claude Code only):
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Rodriguesmath/volto-light-theme-skills/main/install.sh | AGENT=claude-code bash
+```
+
+### Windows (PowerShell)
+
+```powershell
+irm https://raw.githubusercontent.com/Rodriguesmath/volto-light-theme-skills/main/install.ps1 | iex
+```
+
+### Native Claude Code Plugin (skills + hooks + slash commands)
+
+```text
+/plugin marketplace add Rodriguesmath/volto-light-theme-skills
+/plugin install volto-light-theme-skills@volto-light-theme-skills
+```
+
+### Native Gemini CLI Extension
+
+```bash
+gemini extensions install https://github.com/Rodriguesmath/volto-light-theme-skills
 ```
 
 ---
@@ -75,19 +106,26 @@ All skills bundled directly in `skills/` carry an explicit **MIT** license:
 
 ---
 
-## Convention Checker
+## Slash Commands & Hooks
 
-`volto-light-theme` ships with a zero-dependency Python linter that catches `semantic-ui-react` imports and `.ui.*` Semantic UI CSS overrides across any Volto addon:
+- **`/vlt-ladder`** — Picks the lowest-rung VLT customization strategy before writing code.
+- **`/vlt-figma`** — Converts Figma Inspect CSS to Flexbox/Grid, `rem`/`clamp()`, and `--theme-*` tokens.
+- **`/vlt-audit`** — Runs `check_vlt_conventions.py --strict` and `react-doctor` on the current project.
+- **`PostToolUse` hook** ([`hooks/vlt-post-edit.sh`](hooks/vlt-post-edit.sh)) — Automatically runs `check_vlt_conventions.py` after file edits in any `frontend/packages/*/src` addon.
+
+---
+
+## Convention Checker CLI
+
+`check_vlt_conventions.py` catches `semantic-ui-react` imports and `.ui.*` selectors as **errors**, and hardcoded hex colors, `position: absolute`, and undocumented `src/customizations/` overrides as **warnings**:
 
 ```bash
 # Auto-discovers frontend/packages/*/src from a project root
 python3 skills/volto-light-theme/scripts/check_vlt_conventions.py /path/to/plone-project
 
-# Or target a specific addon directly
-python3 skills/volto-light-theme/scripts/check_vlt_conventions.py frontend/packages/my-addon/src
+# Fail on warnings too, or emit JSON for CI/agents
+python3 skills/volto-light-theme/scripts/check_vlt_conventions.py frontend/packages/my-addon/src --strict --format json
 ```
-
-Exit code is `0` when clean, `1` with `file:line` diagnostics on violations.
 
 ---
 
@@ -95,27 +133,23 @@ Exit code is `0` when clean, `1` with `file:line` diagnostics on violations.
 
 ```text
 volto-light-theme-skills/
+├── .claude-plugin/          # Claude Code plugin & marketplace manifests
+├── .github/workflows/       # CI (unit tests, shellcheck/bash -n, JSON validation)
+├── commands/                # /vlt-ladder, /vlt-figma, /vlt-audit
+├── evals/                   # Canonical VLT evaluation cases
+├── hooks/                   # PostToolUse convention hook
+├── skills/                  # Bundled MIT skills
+├── tests/                   # Unit tests for convention checker & skill frontmatter
+├── gemini-extension.json    # Gemini CLI extension manifest
+├── install.ps1              # Windows PowerShell installer
+├── install.sh               # Linux/macOS/WSL installer
 ├── LICENSE
-├── README.md
-├── install.sh
-└── skills/
-    ├── volto-light-theme/
-    │   ├── SKILL.md
-    │   ├── references/
-    │   │   └── mixins-and-tokens.md
-    │   └── scripts/
-    │       └── check_vlt_conventions.py
-    ├── react-best-practices/
-    ├── composition-patterns/
-    ├── accessibility-audit/
-    └── accessible-component-review/
+└── README.md
 ```
 
 ---
 
 ## Credits & Attribution
-
-This repository builds on the work of the Plone, Volto, and React ecosystems:
 
 - **Plone & Volto** — [Plone Foundation](https://plone.org/) and the [Volto](https://github.com/plone/volto) community.
 - **Volto Light Theme** — [kitconcept GmbH](https://github.com/kitconcept/volto-light-theme) (`@kitconcept/volto-light-theme`).

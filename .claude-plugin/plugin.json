@@ -1,0 +1,14 @@
+{
+  "name": "volto-light-theme-skills",
+  "version": "1.0.0",
+  "description": "Upgrade-safe AI agent skills, convention hooks, and slash commands for Plone 6, Volto, and Volto Light Theme.",
+  "author": {
+    "name": "Rodriguesmath"
+  },
+  "license": "MIT",
+  "repository": "https://github.com/Rodriguesmath/volto-light-theme-skills",
+  "keywords": ["plone", "volto", "volto-light-theme", "react", "accessibility"],
+  "skills": "./skills/",
+  "commands": "./commands/",
+  "hooks": "./hooks/hooks.json"
+}
